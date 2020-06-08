@@ -15,7 +15,7 @@ package main
 
 import (
 	"encoding/json"
-	pluginargs "github.com/firecracker-microvm/firecracker-go-sdk/cni/cmd/tc-redirect-tap/args"
+	pluginargs "github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap/args"
 	"os"
 	"strconv"
 	"strings"
@@ -29,7 +29,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 
-	"github.com/firecracker-microvm/firecracker-go-sdk/cni/internal"
+	"github.com/awslabs/tc-redirect-tap/internal"
 )
 
 func main() {

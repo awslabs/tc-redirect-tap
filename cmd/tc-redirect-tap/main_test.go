@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/vishvananda/netlink"
 
-	"github.com/firecracker-microvm/firecracker-go-sdk/cni/internal"
+	"github.com/awslabs/tc-redirect-tap/internal"
 )
 
 const (
