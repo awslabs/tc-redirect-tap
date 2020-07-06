@@ -39,3 +39,9 @@ test:
 .PHONY: clean
 clean:
 	- rm -f tc-redirect-tap
+
+deps:
+	echo
+
+lint:
+	echo
