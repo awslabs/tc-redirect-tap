@@ -20,7 +20,7 @@ import (
 
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
+	current "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -98,7 +98,6 @@ func defaultTestPlugin() *plugin {
 				Mac:     redirectMac.String(),
 			}},
 			IPs: []*current.IPConfig{{
-				Version:   "4",
 				Interface: &redirectIfacesIndex,
 				Address: net.IPNet{
 					IP:   net.IPv4(10, 0, 0, 2),
