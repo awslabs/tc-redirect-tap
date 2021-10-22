@@ -15,27 +15,27 @@ package main
 
 import (
 	"encoding/json"
-	pluginargs "github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap/args"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
+	current "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
 	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/containernetworking/plugins/pkg/utils/buildversion"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 
+	pluginargs "github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap/args"
 	"github.com/awslabs/tc-redirect-tap/internal"
 )
 
 func main() {
 	skel.PluginMain(add, check, del,
 		// support CNI versions that support plugin chaining
-		version.PluginSupports("0.3.0", "0.3.1", version.Current()),
+		version.PluginSupports("0.3.0", "0.3.1", "0.4.0", version.Current()),
 		buildversion.BuildString("tc-redirect-tap"),
 	)
 }
@@ -288,7 +288,6 @@ func (p plugin) add() error {
 		// Add the IP configuration that should be applied to the VM internally by
 		// associating the IPConfig with the vmIface. We use the redirectIface's IP.
 		p.currentResult.IPs = append(p.currentResult.IPs, &current.IPConfig{
-			Version:   redirectIP.Version,
 			Address:   redirectIP.Address,
 			Gateway:   redirectIP.Gateway,
 			Interface: &vmIfaceIndex,
