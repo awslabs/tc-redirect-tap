@@ -231,12 +231,6 @@ func (p plugin) add() error {
 
 		redirectIPs := internal.InterfaceIPs(
 			p.currentResult, redirectLink.Attrs().Name, p.netNS.Path())
-		if len(redirectIPs) != 1 {
-			return errors.Errorf(
-				"expected to find 1 IP on redirect interface %q, but instead found %+v",
-				redirectLink.Attrs().Name, redirectIPs)
-		}
-		redirectIP := redirectIPs[0]
 
 		tapLink, err := p.CreateTap(p.tapName, redirectLink.Attrs().MTU, p.tapUID, p.tapGID)
 		if err != nil {
@@ -285,13 +279,15 @@ func (p plugin) add() error {
 		})
 		vmIfaceIndex := len(p.currentResult.Interfaces) - 1
 
-		// Add the IP configuration that should be applied to the VM internally by
-		// associating the IPConfig with the vmIface. We use the redirectIface's IP.
-		p.currentResult.IPs = append(p.currentResult.IPs, &current.IPConfig{
-			Address:   redirectIP.Address,
-			Gateway:   redirectIP.Gateway,
-			Interface: &vmIfaceIndex,
-		})
+		for _, redirectIP := range redirectIPs {
+			// Add the IP configuration that should be applied to the VM internally by
+			// associating the IPConfig with the vmIface. We use the redirectIface's IP.
+			p.currentResult.IPs = append(p.currentResult.IPs, &current.IPConfig{
+				Address:   redirectIP.Address,
+				Gateway:   redirectIP.Gateway,
+				Interface: &vmIfaceIndex,
+			})
+		}
 
 		return nil
 	})
