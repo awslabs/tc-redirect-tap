@@ -18,6 +18,8 @@ SOURCES:=$(shell find . -name '*.go' ! -name '*_test.go')
 GOMOD := $(shell go env GOMOD)
 GOSUM := $(GOMOD:.mod=.sum)
 
+BINPATH:=$(abspath ./bin)
+
 # Set this to override the directory in which the tc-redirect-tap plugin is
 # installed by the "install" target
 CNI_BIN_ROOT?=/opt/cni/bin
@@ -39,9 +41,17 @@ test:
 .PHONY: clean
 clean:
 	- rm -f tc-redirect-tap
+	- rm -rf $(BINPATH)
+	- rm -rf .*.stamp
 
-deps:
-	echo
+.PHONY: deps
+deps: .lint.stamp
 
-lint:
-	echo
+.lint.stamp:
+	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(BINPATH) v1.46.2
+	$(BINPATH)/golangci-lint --version
+	@touch $@
+
+.PHONY: lint
+lint: .lint.stamp
+	$(BINPATH)/golangci-lint run
