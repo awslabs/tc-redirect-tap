@@ -42,16 +42,15 @@ test:
 clean:
 	- rm -f tc-redirect-tap
 	- rm -rf $(BINPATH)
-	- rm -rf .*.stamp
 
-.PHONY: deps
-deps: .lint.stamp
+$(BINPATH)/git-validation:
+	GOBIN=$(BINPATH) GO111MODULE=off go get -u github.com/vbatts/git-validation
 
-.lint.stamp:
+$(BINPATH)/golangci-lint:
 	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(BINPATH) v1.46.2
 	$(BINPATH)/golangci-lint --version
-	@touch $@
 
 .PHONY: lint
-lint: .lint.stamp
+lint: $(BINPATH)/git-validation $(BINPATH)/golangci-lint
+	$(BINPATH)/git-validation -run DCO,short-subject -range HEAD~8..HEAD
 	$(BINPATH)/golangci-lint run
