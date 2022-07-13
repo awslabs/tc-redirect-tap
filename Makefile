@@ -17,6 +17,7 @@ EXTRAGOARGS?=
 SOURCES:=$(shell find . -name '*.go' ! -name '*_test.go')
 GOMOD := $(shell go env GOMOD)
 GOSUM := $(GOMOD:.mod=.sum)
+GOBIN := $(abspath ./bin)
 
 # Set this to override the directory in which the tc-redirect-tap plugin is
 # installed by the "install" target
@@ -39,9 +40,11 @@ test:
 .PHONY: clean
 clean:
 	- rm -f tc-redirect-tap
+	- rm -rf $(GOBIN)
 
 deps:
 	echo
 
 lint:
-	echo
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOBIN) v1.46.2
+	$(GOBIN)/golangci-lint run ./...
