@@ -11,9 +11,9 @@ jobs:
     env:
       GO111MODULE: on
 
-    # Intentionally use 18.04 instead of "latest" to
+    # Intentionally use 22.04 instead of "latest" to
     # make this build reproducible.
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
