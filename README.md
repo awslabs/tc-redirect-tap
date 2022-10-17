@@ -1,6 +1,8 @@
 # tc-redirect-tap
 
-![Build](https://github.com/awslabs/tc-redirect-tap/workflows/Build/badge.svg?branch=master&event=push)
+[![Build](https://github.com/awslabs/tc-redirect-tap/actions/workflows/build.yaml/badge.svg)](https://github.com/awslabs/tc-redirect-tap/actions/workflows/build.yaml)
+[![CodeQL Scan](https://github.com/awslabs/tc-redirect-tap/actions/workflows/codeql.yml/badge.svg)](https://github.com/awslabs/tc-redirect-tap/actions/workflows/codeql.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/awslabs/tc-redirect-tap)](https://goreportcard.com/report/github.com/awslabs/tc-redirect-tap)
 
 tc-redirect-tap is a [CNI](https://github.com/containernetworking/cni) plugin.
 This plugin allows you to adapt pre-existing CNI plugins/configuration to
