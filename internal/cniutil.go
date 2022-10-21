@@ -81,7 +81,7 @@ func VMTapPair(
 			"expected to find at most 1 interface in sandbox %q, but instead found %d",
 			vmID, len(vmIfaces))
 	} else if len(vmIfaces) == 0 {
-		return nil, nil, LinkNotFoundError{device: fmt.Sprintf("pseudo-device for %s", vmID)}
+		return nil, nil, &LinkNotFoundError{device: fmt.Sprintf("pseudo-device for %s", vmID)}
 	}
 
 	vmIface = vmIfaces[0]
@@ -97,7 +97,7 @@ func VMTapPair(
 			"expected to find at most 1 interface with name %q, but instead found %d",
 			tapName, len(tapIfaces))
 	} else if len(tapIfaces) == 0 {
-		return nil, nil, LinkNotFoundError{device: tapName}
+		return nil, nil, &LinkNotFoundError{device: tapName}
 	}
 
 	tapIface = tapIfaces[0]
