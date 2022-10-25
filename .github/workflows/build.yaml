@@ -23,7 +23,7 @@ jobs:
     name: Go ${{ matrix.go }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # By default, the checkout action only fetches the last commit,
           # but we want to run DCO check against all commit messages.
@@ -36,7 +36,7 @@ jobs:
           # So we need to fetch 21 commits (including the merge commit)
           # to have 20 actual commits from a pull request.
           fetch-depth: 21
-      - uses: actions/setup-go@v1
+      - uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
       - run: make deps
