@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  create:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Get dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make test
+
+      - name: Build
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o bin/tc-redirect-tap-amd64 ./cmd/tc-redirect-tap
+          GOOS=linux GOARCH=arm64 go build -o bin/tc-redirect-tap-arm64 ./cmd/tc-redirect-tap
+
+      - name: Sign
+        run: |
+          echo "${{ hashFiles('bin/tc-redirect-tap-amd64') }}" > bin/tc-redirect-tap-amd64.sha256
+          echo "${{ hashFiles('bin/tc-redirect-tap-arm64') }}" > bin/tc-redirect-tap-arm64.sha256
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/tc-redirect-tap-amd64
+            bin/tc-redirect-tap-arm64
+            bin/tc-redirect-tap-amd64.sha256
+            bin/tc-redirect-tap-arm64.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
