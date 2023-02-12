@@ -18,8 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
@@ -136,29 +134,22 @@ func newPlugin(args *skel.CmdArgs) (*plugin, error) {
 
 		currentResult: currentResult,
 	}
-	parsedArgs, err := extractArgs(args.Args)
+
+	parsedArgs, err := pluginargs.ExtractArgs(args.StdinData, args.Args)
 	if err != nil {
 		return nil, err
 	}
 
-	if tapName, wasDefined := parsedArgs[pluginargs.TCRedirectTapName]; wasDefined {
+	if tapName := parsedArgs.TapName; tapName != "" {
 		plugin.tapName = tapName
 	}
 
-	if tapUIDVal, wasDefined := parsedArgs[pluginargs.TCRedirectTapUID]; wasDefined {
-		tapUID, err := strconv.Atoi(tapUIDVal)
-		if err != nil {
-			return nil, fmt.Errorf("tapUID should be numeric convertible, got %q: %w", tapUIDVal, err)
-		}
-		plugin.tapUID = tapUID
+	if tapUID := parsedArgs.TapUID; tapUID != nil {
+		plugin.tapUID = *tapUID
 	}
 
-	if tapGIDVal, wasDefined := parsedArgs[pluginargs.TCRedirectTapGID]; wasDefined {
-		tapGID, err := strconv.Atoi(tapGIDVal)
-		if err != nil {
-			return nil, fmt.Errorf("tapGID should be numeric convertible, got %q: %w", tapGIDVal, err)
-		}
-		plugin.tapGID = tapGID
+	if tapGID := parsedArgs.TapGID; tapGID != nil {
+		plugin.tapGID = *tapGID
 	}
 
 	return plugin, nil
@@ -397,22 +388,4 @@ type NoPreviousResultError struct{}
 
 func (e NoPreviousResultError) Error() string {
 	return "no previous result was found, was this plugin chained with a previous one?"
-}
-
-// extractArgs returns cli args in form of map of strings
-// args string - cli args string("key1=val1;key2=val2)
-func extractArgs(args string) (map[string]string, error) {
-	result := make(map[string]string)
-	if args != "" {
-		argumentsPairs := strings.Split(args, ";")
-		for _, pairStr := range argumentsPairs {
-			pair := strings.SplitN(pairStr, "=", 2)
-			if len(pair) < 2 {
-				return result, fmt.Errorf("Invalid cni arguments format, %q", pairStr)
-			}
-			result[pair[0]] = pair[1]
-		}
-	}
-
-	return result, nil
 }
