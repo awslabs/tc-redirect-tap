@@ -36,7 +36,7 @@ jobs:
           # So we need to fetch 21 commits (including the merge commit)
           # to have 20 actual commits from a pull request.
           fetch-depth: 21
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
       - run: make deps
