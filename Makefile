@@ -29,7 +29,7 @@ CNI_BIN_ROOT?=/opt/cni/bin
 all: tc-redirect-tap
 
 tc-redirect-tap: $(SOURCES) $(GOMOD) $(GOSUM)
-	go build -o tc-redirect-tap $(CURDIR)/cmd/tc-redirect-tap
+	CGO_ENABLED=0 go build -o tc-redirect-tap $(CURDIR)/cmd/tc-redirect-tap
 
 .PHONY: install
 install: tc-redirect-tap
