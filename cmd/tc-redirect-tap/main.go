@@ -34,7 +34,12 @@ import (
 )
 
 func main() {
-	skel.PluginMain(add, check, del,
+	skel.PluginMainFuncs(
+		skel.CNIFuncs{
+			Add:   add,
+			Check: check,
+			Del:   del,
+		},
 		// support CNI versions that support plugin chaining
 		version.PluginSupports("0.3.0", "0.3.1", "0.4.0", version.Current()),
 		buildversion.BuildString("tc-redirect-tap"),
