@@ -33,7 +33,7 @@ jobs:
           echo "${{ hashFiles('bin/tc-redirect-tap-arm64') }}" > bin/tc-redirect-tap-arm64.sha256
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             bin/tc-redirect-tap-amd64
