@@ -19,7 +19,7 @@ GOMOD := $(shell go env GOMOD)
 GOSUM := $(GOMOD:.mod=.sum)
 GOBIN := $(abspath ./bin)
 
-GOLANGCI_LINT_VERSION?=v1.56.2
+GOLANGCI_LINT_VERSION?=v1.62.2
 
 # Set this to override the directory in which the tc-redirect-tap plugin is
 # installed by the "install" target
