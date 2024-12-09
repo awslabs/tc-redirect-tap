@@ -29,8 +29,8 @@ import (
 	"github.com/containernetworking/plugins/pkg/utils/buildversion"
 	"github.com/hashicorp/go-multierror"
 
-	pluginargs "github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap/args"
-	"github.com/awslabs/tc-redirect-tap/internal"
+	pluginargs "github.com/appfactory-hq/tc-redirect-tap/cmd/tc-redirect-tap/args"
+	"github.com/appfactory-hq/tc-redirect-tap/internal"
 )
 
 func main() {

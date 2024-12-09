@@ -2,11 +2,11 @@ name: "CodeQL Scan"
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   schedule:
-    - cron: '25 21 * * 5'
+    - cron: "25 21 * * 5"
 
 jobs:
   analyze:
@@ -20,23 +20,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'go' ]
+        language: ["go"]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Build
-      run: make
+      - name: Build
+        run: make
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
-
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
