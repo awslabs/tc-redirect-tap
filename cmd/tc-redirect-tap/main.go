@@ -40,8 +40,7 @@ func main() {
 			Check: check,
 			Del:   del,
 		},
-		// support CNI versions that support plugin chaining
-		version.PluginSupports("0.3.0", "0.3.1", "0.4.0", version.Current()),
+		version.PluginSupports(internal.SupportedVersions()...),
 		buildversion.BuildString("tc-redirect-tap"),
 	)
 }
