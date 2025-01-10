@@ -195,13 +195,14 @@ func TestAddFailsCreateTapErr(t *testing.T) {
 
 func TestGetCurrentResult(t *testing.T) {
 	expectedResult := defaultTestPlugin().currentResult
+	expectedCNIVersion := "0.3.1"
 
 	netConf := &types.NetConf{
-		CNIVersion: "0.3.1",
+		CNIVersion: expectedCNIVersion,
 		Name:       "my-lil-network",
 		Type:       "my-lil-plugin",
 		RawPrevResult: map[string]interface{}{
-			"cniVersion": "0.3.1",
+			"cniVersion": expectedCNIVersion,
 			"interfaces": expectedResult.Interfaces,
 			"ips":        expectedResult.IPs,
 			"routes":     expectedResult.Routes,
@@ -216,10 +217,11 @@ func TestGetCurrentResult(t *testing.T) {
 		StdinData: rawPrevResultBytes,
 	}
 
-	actualResult, err := getCurrentResult(cmdArgs)
+	actualResult, actualCNIVersion, err := getCurrentResult(cmdArgs)
 	require.NoError(t, err, "failed to get current result from mock net conf")
 
 	assert.Equal(t, expectedResult, actualResult)
+	assert.Equal(t, expectedCNIVersion, actualCNIVersion)
 }
 
 func TestDel(t *testing.T) {
