@@ -64,7 +64,7 @@ func add(args *skel.CmdArgs) error {
 		return err
 	}
 
-	return types.PrintResult(p.currentResult, p.currentResult.CNIVersion)
+	return types.PrintResult(p.currentResult, p.confCNIVersion)
 }
 
 func del(args *skel.CmdArgs) error {
@@ -116,7 +116,7 @@ func newPlugin(args *skel.CmdArgs) (*plugin, error) {
 		}
 	}
 
-	currentResult, err := getCurrentResult(args)
+	currentResult, confCNIVersion, err := getCurrentResult(args)
 	if err != nil {
 		switch err.(type) {
 		case *NoPreviousResultError:
@@ -138,7 +138,8 @@ func newPlugin(args *skel.CmdArgs) (*plugin, error) {
 
 		netNS: netNS,
 
-		currentResult: currentResult,
+		currentResult:  currentResult,
+		confCNIVersion: confCNIVersion,
 	}
 	parsedArgs, err := extractArgs(args.Args)
 	if err != nil {
@@ -168,29 +169,34 @@ func newPlugin(args *skel.CmdArgs) (*plugin, error) {
 	return plugin, nil
 }
 
-func getCurrentResult(args *skel.CmdArgs) (*current.Result, error) {
+func getCurrentResult(args *skel.CmdArgs) (*current.Result, string, error) {
 	// parse the previous CNI result (or throw an error if there wasn't one)
 	cniConf := types.NetConf{}
 	err := json.Unmarshal(args.StdinData, &cniConf)
 	if err != nil {
-		return nil, fmt.Errorf("failure checking for previous result output: %w", err)
+		return nil, "", fmt.Errorf("failure checking for previous result output: %w", err)
 	}
+
+	// Store the CNI version here, since current.NewResultFromResult will
+	// change the CNI version to ImplementedSpecVersion, which is usually
+	// the latest CNI version, not the version specified in the conf.
+	confCNIVersion := cniConf.CNIVersion
 
 	err = version.ParsePrevResult(&cniConf)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse previous CNI result: %w", err)
+		return nil, "", fmt.Errorf("failed to parse previous CNI result: %w", err)
 	}
 
 	if cniConf.PrevResult == nil {
-		return nil, &NoPreviousResultError{}
+		return nil, "", &NoPreviousResultError{}
 	}
 
 	currentResult, err := current.NewResultFromResult(cniConf.PrevResult)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate current result from previous CNI result: %w", err)
+		return nil, "", fmt.Errorf("failed to generate current result from previous CNI result: %w", err)
 	}
 
-	return currentResult, nil
+	return currentResult, confCNIVersion, nil
 }
 
 type plugin struct {
@@ -223,6 +229,9 @@ type plugin struct {
 	// currentResult is the CNI result object, initialized to the previous CNI
 	// result if there was any or to nil if there was no previous result provided
 	currentResult *current.Result
+
+	// confCniVersion is the CNI version specified by the conflist passed to tc-redirect-tap
+	confCNIVersion string
 }
 
 func (p plugin) add() error {
