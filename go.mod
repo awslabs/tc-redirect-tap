@@ -1,6 +1,8 @@
 module github.com/awslabs/tc-redirect-tap
 
-go 1.21
+go 1.23.0
+
+toolchain go1.23.7
 
 require (
 	github.com/containernetworking/cni v1.2.3
