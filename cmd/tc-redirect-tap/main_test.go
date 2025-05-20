@@ -27,6 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/vishvananda/netlink"
 
+	pluginargs "github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap/args"
 	"github.com/awslabs/tc-redirect-tap/internal"
 )
 
@@ -387,10 +388,15 @@ func TestNewPlugin(t *testing.T) {
 }
 
 func TestExtractArgs(t *testing.T) {
-	cliArgs := "key1=val1;key2=val2"
-	parsedArgs, err := extractArgs(cliArgs)
+	stdinArgs := []byte(`{"tap_name": "tap0", "uid": 123, "gid": 321}`)
+	cliArgs := "TC_REDIRECT_TAP_NAME=tap1;key2=should-ignore"
+	parsedArgs, err := pluginargs.ExtractArgs(stdinArgs, cliArgs)
 	require.NoError(t, err,
 		"failed to extract cli args")
-	assert.Equal(t, "val2", parsedArgs["key2"],
-		"Parameter value for key2 should be `val2`")
+	assert.Equal(t, "tap1", parsedArgs.TapName,
+		"Parameter value for TapName should be `tap1`")
+	assert.Equal(t, 123, *parsedArgs.TapUID,
+		"Parameter value for TapUID should be `123`")
+	assert.Equal(t, 321, *parsedArgs.TapGID,
+		"Parameter value for TapGID should be `321`")
 }
